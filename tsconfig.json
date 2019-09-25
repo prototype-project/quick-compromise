@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
+    "outDir": "./built/",
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitReturns": true,
     "module": "esnext",
-    "target": "esnext",
-    "alwaysStrict": true
+    "moduleResolution": "node",
+    "target": "esnext"
   },
   "include": [
-    "src/**/*"
+    "./src/**/*"
   ],
   "exclude": [
     "node_modules"
