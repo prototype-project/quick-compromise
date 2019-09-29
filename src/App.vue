@@ -1,23 +1,14 @@
 <template>
-    <div id="app">
-        {{ message }}
-    </div>
+    <CreatePoll/>
 </template>
 
-<script lang="ts">
-    export default {
-        data() {
-            return {
-                message: 'Hello World',
-            };
-        },
-    };
-</script>
+<script>
+  import CreatePoll from './translations/translations'
+  import 'bootstrap-material-design/dist/css/bootstrap-material-design.min.css'
 
-<style>
-    #app {
-        font-size: 18px;
-        font-family: 'Roboto', sans-serif;
-        color: blue;
+  export default {
+    components: {
+      CreatePoll
     }
-</style>
+  };
+</script>
