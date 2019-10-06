@@ -84,6 +84,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/index.html',
     }),
+    new webpack.ProvidePlugin({
+      _: 'lodash'
+    }),
     new webpack.HotModuleReplacementPlugin()
   ]
 };

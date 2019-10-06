@@ -1,14 +1,14 @@
 <template>
-    <CreatePoll/>
+    <login-form/>
 </template>
 
 <script>
-  import CreatePoll from './translations/translations'
-  import 'bootstrap-material-design/dist/css/bootstrap-material-design.min.css'
+  import LoginForm from './auth/login-form';
+  import 'bootstrap/dist/css/bootstrap.min.css';
 
   export default {
     components: {
-      CreatePoll
+      LoginForm
     }
   };
 </script>

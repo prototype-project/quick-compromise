@@ -15,8 +15,8 @@
 </template>
 
 <script>
-  import Auth from './auth';
-  import EasydbClient from './easydb-client';
+  import User from '../auth/user';
+  import EasydbClient from '../easydb-client';
 
   export default {
     data() {
@@ -26,7 +26,8 @@
       };
     },
     methods: {
-      fetchTranslations(authObject) {
+      async fetchTranslations(user) {
+        return [];
       }
     }
   };
