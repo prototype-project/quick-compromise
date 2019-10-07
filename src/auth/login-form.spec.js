@@ -5,8 +5,6 @@ import LoginForm from './login-form';
 import {User} from './user';
 
 const {GenericContainer} = require("testcontainers");
-const expect = require('chai').expect;
-const assert = require('chai').assert;
 
 describe('Authentication', () => {
   let container;

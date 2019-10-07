@@ -26,7 +26,6 @@
 
 <script>
   import {User} from './user';
-  const _ = require('lodash');
 
   const fields = {
     USERNAME_FIELD: "username_field",

@@ -23,7 +23,12 @@ module.exports = {
   },
   plugins: [
     // make sure to include the plugin for the magic
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new webpack.ProvidePlugin({
+      _: 'lodash',
+      assert: ['chai', 'assert'],
+      expect: ['chai', 'expect'],
+    })
   ],
   externals: [nodeExternals()],
   mode: "development"
