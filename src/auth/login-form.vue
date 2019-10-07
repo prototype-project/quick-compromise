@@ -25,7 +25,8 @@
 </template>
 
 <script>
-  import User from './user';
+  import {User} from './user';
+  const _ = require('lodash');
 
   const fields = {
     USERNAME_FIELD: "username_field",
@@ -58,9 +59,9 @@
     methods: {
       async submit() {
         this.formInput.submitted = true;
-        this.validate();
-        await this.login();
-
+        if (this.validate()) {
+          await this.login();
+        }
       },
       validate() {
         this.errors = {};
@@ -70,11 +71,16 @@
         if (!this.formInput.password) {
           this.errors[fields.PASSWORD_FIELD] = "Password is required";
         }
+        return _.isEmpty(this.errors);
       },
       async login() {
         if (!this.user.isAuthenticated()) {
           this.user = new User(this.easydbClient, this.spaceName, this.formInput.username, this.formInput.password);
-          await this.user.authenticate();
+          try {
+            await this.user.authenticate();
+          } catch (e) {
+            this.errors["auth_error"] = "Invalid username or password";
+          }
         }
       },
       isValid(field) {

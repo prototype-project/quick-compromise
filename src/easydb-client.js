@@ -3,7 +3,6 @@ const fetch = require("node-fetch");
 export {EasydbClient, Element, Field, EasydbClientException}
 
 class EasydbClient {
-
   constructor(serverUrl) {
     this.spacesPath = "/api/v1/spaces";
     this.spacesUrl = serverUrl + this.spacesPath;
@@ -51,7 +50,8 @@ class EasydbClient {
     }
     let response = await fetch(url, options);
     if (!response.ok) {
-      throw new EasydbClientException(response.statusText)
+      let errorData = await response.json();
+      throw new EasydbClientException(response.statusText, response.status, errorData);
     }
     return response;
   }
@@ -62,12 +62,13 @@ class EasydbClient {
       headers: {'Content-Type': 'application/json'}
     };
     let response = await fetch(url, options);
-    console.log(url);
-    console.log(response.statusText);
+    let json = await response.json();
+    // console.log(url);
+    // console.log(response.statusText);
     if (!response.ok) {
-      throw new EasydbClientException(response.statusText)
+      throw new EasydbClientException(response.statusText, response.status, json);
     }
-    return await response.json();
+    return json
   }
 }
 
@@ -118,8 +119,13 @@ class Field {
 }
 
 class EasydbClientException extends Error {
-  constructor(statusText) {
+  constructor(statusText, status, errorData) {
     super(statusText);
+    this.status = status;
+    this.errorData = errorData;
   }
 
+  isNotFound() {
+    return this.status === 404 && this.errorData.errorCode === "ELEMENT_DOES_NOT_EXIST";
+  }
 }

@@ -2,7 +2,9 @@ import {Element} from "../easydb-client";
 
 import {Base64} from "js-base64";
 
-export default class User {
+export {User, AuthenticationError}
+
+class User {
   constructor(easydbClient, spaceName, name = "", password = "") {
     this.easydbClient = easydbClient;
     this.spaceName = spaceName;
@@ -18,13 +20,16 @@ export default class User {
       new Element(this.encodedCredentials));
   }
 
-  delete() {
-
-  }
-
   async authenticate() {
-    await this.easydbClient.getElement(this.spaceName, this.bucketName, this.encodedCredentials);
-    this.authenticated = true;
+    try {
+      await this.easydbClient.getElement(this.spaceName, this.bucketName, this.encodedCredentials);
+      this.authenticated = true;
+    } catch (error) {
+      if (error.isNotFound()) {
+        throw new AuthenticationError(error.errorData);
+      }
+      throw error;
+    }
   };
 
   isAuthenticated() {
@@ -33,5 +38,12 @@ export default class User {
 
   logout() {
 
+  }
+}
+
+class AuthenticationError extends Error {
+  constructor(errorData) {
+    super();
+    this.errorData = errorData;
   }
 }

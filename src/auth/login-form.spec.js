@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 import {EasydbClient} from '../easydb-client';
 import LoginForm from './login-form';
-import User from './user';
+import {User} from './user';
 
 const {GenericContainer} = require("testcontainers");
 const expect = require('chai').expect;
@@ -49,7 +49,35 @@ describe('Authentication', () => {
     // then
     expect(app.user.isAuthenticated()).to.be.true;
     expect(app.formInput.submitted).to.be.true;
-    assert(app.errors, {});
+    assert.deepEqual(app.errors, {});
+    expect(app.isValid(app.fields.PASSWORD_FIELD)).to.be.true;
+    expect(app.isValid(app.fields.USERNAME_FIELD)).to.be.true;
+  });
+
+  it('should validate form in case of empty fields', async () => {
+    // when
+    await app.submit();
+
+    // then
+    expect(app.user.isAuthenticated()).to.be.false;
+    expect(app.formInput.submitted).to.be.true;
+    assert.deepEqual(app.errors, {'username_field': "Username is required", 'password_field': 'Password is required'});
+    expect(app.isValid(app.fields.PASSWORD_FIELD)).to.be.false;
+    expect(app.isValid(app.fields.USERNAME_FIELD)).to.be.false;
+  });
+
+  it('should validate form in case of invalid credentials', async () => {
+    // given
+    app.formInput.username = "user";
+    app.formInput.password = "invalid";
+
+    // when
+    await app.submit();
+
+    // then
+    expect(app.user.isAuthenticated()).to.be.false;
+    expect(app.formInput.submitted).to.be.true;
+    assert.deepInclude(app.errors, {'auth_error': 'Invalid username or password'});
     expect(app.isValid(app.fields.PASSWORD_FIELD)).to.be.true;
     expect(app.isValid(app.fields.USERNAME_FIELD)).to.be.true;
   });
