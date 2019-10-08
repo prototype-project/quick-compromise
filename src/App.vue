@@ -1,14 +1,12 @@
 <template>
-    <login-form/>
+    <div>
+        <router-link :to="{ name: 'LoginForm' }">Login</router-link>
+        <router-view class="view"></router-view>
+    </div>
 </template>
 
 <script>
-  import LoginForm from './auth/login-form';
-  import 'bootstrap/dist/css/bootstrap.min.css';
-
   export default {
-    components: {
-      LoginForm
-    }
-  };
+    name: 'app'
+  }
 </script>

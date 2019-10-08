@@ -16,7 +16,7 @@
 
 <script>
   import User from '../auth/user';
-  import EasydbClient from '../easydb-client';
+  import EasydbClient from '../easydb/easydb-client';
 
   export default {
     data() {

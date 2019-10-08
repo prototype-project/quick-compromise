@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-import {EasydbClient} from '../easydb-client';
+import {EasydbClient} from '../easydb/easydb-client';
 import LoginForm from './login-form';
 import {User} from './user';
 

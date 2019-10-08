@@ -1,4 +1,4 @@
-import {Element} from "../easydb-client";
+import {Element} from "../easydb/easydb-client";
 
 import {Base64} from "js-base64";
 
