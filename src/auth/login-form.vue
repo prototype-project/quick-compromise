@@ -1,5 +1,8 @@
 <template>
     <form class="needs-validation" novalidate>
+        <div class="alert alert-danger" v-if="hasAuthError()" role="alert">
+            {{ errors["auth_error"] }}
+        </div>
         <div class="form-row">
             <div class="col-md-6 mb-3">
                 <input v-model="formInput.username" class="form-control"
@@ -25,8 +28,6 @@
 </template>
 
 <script>
-  import {User} from './user';
-
   const fields = {
     USERNAME_FIELD: "username_field",
     PASSWORD_FIELD: "password_field"
@@ -34,12 +35,8 @@
 
   export default {
     props: {
-      easydbClient: {
+      user: {
         type: Object,
-        required: true
-      },
-      spaceName: {
-        type: String,
         required: true
       }
     },
@@ -51,8 +48,7 @@
           submitted: false,
           username: '',
           password: ''
-        },
-        user: new User(this.easydbClient, this.spaceName)
+        }
       }
     },
     methods: {
@@ -74,10 +70,11 @@
       },
       async login() {
         if (!this.user.isAuthenticated()) {
-          this.user = new User(this.easydbClient, this.spaceName, this.formInput.username, this.formInput.password);
+          this.user.setCredentials(this.formInput.username, this.formInput.password);
           try {
             await this.user.authenticate();
           } catch (e) {
+            this.$forceUpdate();
             this.errors["auth_error"] = "Invalid username or password";
           }
         }
@@ -87,6 +84,10 @@
       },
       isInvalid(field) {
         return this.formInput.submitted && this.errors[field];
+      },
+      hasAuthError() {
+        let error = this.errors["auth_error"];
+        return !_.isUndefined(error) && !_.isEmpty(error) && this.formInput.submitted;
       }
     }
   }

@@ -22,14 +22,15 @@ describe('Authentication', () => {
   beforeEach(async () => {
     let spaceName = await client.createSpace();
     let bucketName = "users";
-    let user = new User(client, spaceName, "user", "password");
+    let user = new User(client, spaceName);
+    user.setCredentials("user", "password");
 
     await client.createBucket(spaceName, bucketName);
     await user.create();
 
     const Constructor = Vue.extend(LoginForm);
     app = new Constructor({
-      propsData: {easydbClient: client, spaceName: spaceName}
+      propsData: {user: new User(client, spaceName)}
     }).$mount();
   });
 
@@ -50,6 +51,7 @@ describe('Authentication', () => {
     assert.deepEqual(app.errors, {});
     expect(app.isValid(app.fields.PASSWORD_FIELD)).to.be.true;
     expect(app.isValid(app.fields.USERNAME_FIELD)).to.be.true;
+    expect(app.hasAuthError(app.fields.USERNAME_FIELD)).to.be.false;
   });
 
   it('should validate form in case of empty fields', async () => {
@@ -62,6 +64,7 @@ describe('Authentication', () => {
     assert.deepEqual(app.errors, {'username_field': "Username is required", 'password_field': 'Password is required'});
     expect(app.isValid(app.fields.PASSWORD_FIELD)).to.be.false;
     expect(app.isValid(app.fields.USERNAME_FIELD)).to.be.false;
+    expect(app.hasAuthError(app.fields.USERNAME_FIELD)).to.be.false;
   });
 
   it('should validate form in case of invalid credentials', async () => {
@@ -78,6 +81,7 @@ describe('Authentication', () => {
     assert.deepInclude(app.errors, {'auth_error': 'Invalid username or password'});
     expect(app.isValid(app.fields.PASSWORD_FIELD)).to.be.true;
     expect(app.isValid(app.fields.USERNAME_FIELD)).to.be.true;
+    expect(app.hasAuthError(app.fields.USERNAME_FIELD)).to.be.true;
   });
 
   after(async () => {

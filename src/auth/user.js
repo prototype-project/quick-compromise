@@ -5,24 +5,30 @@ import {Base64} from "js-base64";
 export {User, AuthenticationError}
 
 class User {
-  constructor(easydbClient, spaceName, name = "", password = "") {
+  constructor(easydbClient, spaceName) {
     this.easydbClient = easydbClient;
     this.spaceName = spaceName;
     this.bucketName = "users";
     this.authenticated = false;
-    this.encodedCredentials = Base64.encode(`${name}:${password}`);
+    this.username = "";
+    this.password = "";
+  }
+
+  setCredentials(username, password) {
+    this.username = username;
+    this.password = password;
   }
 
   async create() {
     return await this.easydbClient.addElement(
       this.spaceName,
       this.bucketName,
-      new Element(this.encodedCredentials));
+      new Element(this._encodeCredentials()));
   }
 
   async authenticate() {
     try {
-      await this.easydbClient.getElement(this.spaceName, this.bucketName, this.encodedCredentials);
+      await this.easydbClient.getElement(this.spaceName, this.bucketName, this._encodeCredentials());
       this.authenticated = true;
     } catch (error) {
       if (error.isNotFound()) {
@@ -36,8 +42,8 @@ class User {
     return this.authenticated;
   }
 
-  logout() {
-
+  _encodeCredentials() {
+    return Base64.encode(`${this.username}:${this.password}`)
   }
 }
 
