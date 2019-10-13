@@ -1,7 +1,7 @@
 <template>
     <form class="needs-validation" novalidate>
-        <div class="alert alert-danger" v-if="hasAuthError()" role="alert">
-            {{ errors["auth_error"] }}
+        <div class="alert alert-danger" v-if="hasRegisterError()" role="alert">
+            {{ errors["register_error"] }}
         </div>
         <div class="form-row">
             <div class="col-md-6 mb-3">
@@ -23,12 +23,12 @@
                 </div>
             </div>
         </div>
-        <button type="button" class="btn btn-primary" v-on:click="submit()">Login</button>
+        <button type="button" class="btn btn-primary" v-on:click="submit()">Sign up</button>
     </form>
 </template>
 
 <script>
-  import {AuthenticationError} from './user';
+  import {RegisterError} from "./user";
 
   const fields = {
     USERNAME_FIELD: "username_field",
@@ -57,7 +57,7 @@
       async submit() {
         this.formInput.submitted = true;
         if (this.validate()) {
-          await this.login();
+          await this.register();
         }
       },
       validate() {
@@ -70,16 +70,17 @@
         }
         return _.isEmpty(this.errors);
       },
-      async login() {
+      async register() {
         if (!this.user.isAuthenticated()) {
           this.user.setCredentials(this.formInput.username, this.formInput.password);
           try {
+            await this.user.create();
             await this.user.authenticate();
           } catch (e) {
-            if (e instanceof AuthenticationError) {
-              this.errors["auth_error"] = "Invalid username or password";
+            if (e instanceof RegisterError) {
+              this.errors["register_error"] = "User with given username already exists";
             } else {
-              this.errors["auth_error"] = "Unexpected error. Try again :(";
+              this.errors["register_error"] = "Unexpected error. Try again :(";
             }
             this.$forceUpdate();
           }
@@ -91,8 +92,8 @@
       isInvalid(field) {
         return this.formInput.submitted && this.errors[field];
       },
-      hasAuthError() {
-        let error = this.errors["auth_error"];
+      hasRegisterError() {
+        let error = this.errors["register_error"];
         return !_.isUndefined(error) && !_.isEmpty(error) && this.formInput.submitted;
       }
     }

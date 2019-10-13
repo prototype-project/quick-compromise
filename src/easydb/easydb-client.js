@@ -125,7 +125,15 @@ class EasydbClientException extends Error {
     this.errorData = errorData;
   }
 
-  isNotFound() {
+  notFound() {
     return this.status === 404 && this.errorData.errorCode === "ELEMENT_DOES_NOT_EXIST";
+  }
+
+  bucketDoesNotExist() {
+    return this.status === 404 && this.errorData.errorCode === "BUCKET_DOES_NOT_EXIST";
+  }
+
+  elementAlreadyExist() {
+    return this.status === 400 && this.errorData.errorCode === "ELEMENT_ALREADY_EXISTS";
   }
 }
