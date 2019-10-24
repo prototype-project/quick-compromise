@@ -10,13 +10,11 @@ class User {
     this.spaceName = spaceName;
     this.bucketName = "users";
     this.authenticated = false;
-    this.username = "";
-    this.password = "";
+    this.encodedCredentials = "";
   }
 
   setCredentials(username, password) {
-    this.username = username;
-    this.password = password;
+    this.encodedCredentials = Base64.encode(`${username}:${password}`);
   }
 
   async create() {
@@ -38,7 +36,7 @@ class User {
     return await this.easydbClient.addElement(
       this.spaceName,
       this.bucketName,
-      new Element(this._encodeCredentials()));
+      new Element(this.encodedCredentials));
   }
 
   async _createBucket() {
@@ -50,22 +48,22 @@ class User {
 
   async authenticate() {
     try {
-      await this.easydbClient.getElement(this.spaceName, this.bucketName, this._encodeCredentials());
+      await this.easydbClient.getElement(this.spaceName, this.bucketName, this.encodedCredentials);
       this.authenticated = true;
     } catch (error) {
-      if (error.notFound() || error.bucketDoesNotExist()) {
+      if (error.elementDoesNotExist() || error.bucketDoesNotExist()) {
         throw new AuthenticationError(error.errorData);
       }
       throw error;
     }
   };
 
-  isAuthenticated() {
-    return this.authenticated;
+  getId() {
+    return this.encodedCredentials;
   }
 
-  _encodeCredentials() {
-    return Base64.encode(`${this.username}:${this.password}`)
+  isAuthenticated() {
+    return this.authenticated;
   }
 }
 

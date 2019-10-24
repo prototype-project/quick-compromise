@@ -8,19 +8,22 @@
     "build": "npm run clean && webpack --mode production",
     "serve": "webpack-dev-server --mode development",
     "proxy": "node ./src/local-proxy.js",
-    "test": "mocha-webpack --timeout 30000 --webpack-config webpack.test.js \"src/**/*.spec.js\""
+    "test": "mocha-webpack --timeout 30000 --webpack-config webpack.test.js --require src/test/setup.js \"src/**/*.spec.js\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.6.0",
     "@babel/preset-env": "^7.6.0",
+    "@vue/test-utils": "^1.0.0-beta.29",
     "autoprefixer": "^9.6.1",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
     "css-loader": "^3.2.0",
     "html-webpack-plugin": "^3.2.0",
+    "jsdom": "^15.2.0",
+    "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",
     "mocha-webpack": "^2.0.0-beta.0",
     "node-sass": "^4.12.0",
