@@ -45,10 +45,12 @@ describe('Translation list', () => {
     // given
     let translation1 = new Translation(user.getId(), "przykład1", "example1");
     let translation2 = new Translation(user.getId(), "przykład2", "example2");
+    app.addEmptyTranslation();
+    app.addEmptyTranslation();
 
     // when
-    let added1 = await app.saveTranslation(translation1);
-    let added2 = await app.saveTranslation(translation2);
+    let added1 = await app.saveTranslation(translation1, 0);
+    let added2 = await app.saveTranslation(translation2, 1);
 
     // and when
     await app.fetchTranslations();
@@ -57,4 +59,20 @@ describe('Translation list', () => {
     assert.deepEqual(app.translations, [added1, added2]);
   });
 
+  it('should update translation', async () => {
+    // given
+    let originalTranslation = new Translation(user.getId(), "oryginalne słowo", "original word");
+    app.addEmptyTranslation();
+    let originalSaved = await app.saveTranslation(originalTranslation);
+    let changedTranslation = new Translation(user.getId(), "zmienione słowo", "changed word", originalSaved.translationId);
+
+    // when
+    await app.updateTranslation(changedTranslation, 0);
+
+    // and when
+    await app.fetchTranslations();
+
+    // then
+    assert.deepEqual(app.translations, [changedTranslation]);
+  });
 });

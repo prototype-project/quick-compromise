@@ -9,24 +9,25 @@ class EasydbClient {
   }
 
   async createSpace() {
-    let response = await EasydbClient.postData(this.buildSpaceUrl());
+    let response = await EasydbClient.sendData(this.buildSpaceUrl());
     let json = await response.json();
     return json.spaceName
   }
 
   async createBucket(spaceName, bucketName) {
     let bucket = new Bucket(bucketName);
-    return await EasydbClient.postData(this.buildBucketUrl(spaceName), bucket.toJson());
+    return await EasydbClient.sendData(this.buildBucketUrl(spaceName), bucket.toJson());
   }
 
   async addElement(spaceName, bucketName, element) {
-    let response = await EasydbClient.postData(this.buildElementUrl(spaceName, bucketName), element);
+    let response = await EasydbClient.sendData(this.buildElementUrl(spaceName, bucketName), element);
     let data = await response.json();
     return EasydbClient.mapToElement(data);
   }
 
-  async updateElement(spaceName, bucketName, element) {
-    await await EasydbClient.postData(this.buildElementUrl(spaceName, bucketName, element.id), element);
+  async updateElement(spaceName, bucketName, id, element) {
+    let url = this.buildElementUrl(spaceName, bucketName, id);
+    await EasydbClient.sendData(url, element, "PUT");
   }
 
   async getElement(spaceName, bucketName, id) {
@@ -60,15 +61,17 @@ class EasydbClient {
     return new Element(json.id, fields);
   }
 
-  static async postData(url, data = {}) {
+  static async sendData(url, data = {}, method = "POST") {
     let options = {
-      method: "POST",
+      method: method,
       headers: {'Content-Type': 'application/json'}
     };
     if (data) {
       options["body"] = JSON.stringify(data);
     }
     let response = await fetch(url, options);
+    // console.log(url);
+    // console.log(response.statusText);
     if (!response.ok) {
       let errorData = await response.json();
       throw new EasydbClientException(response.statusText, response.status, errorData);
@@ -85,7 +88,6 @@ class EasydbClient {
     let json = await response.json();
     // console.log(url);
     // console.log(response.statusText);
-    // console.log(json);
     if (!response.ok) {
       throw new EasydbClientException(response.statusText, response.status, json);
     }

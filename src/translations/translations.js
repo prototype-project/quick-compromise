@@ -51,12 +51,11 @@ class TranslationClient {
   }
 
   async updateTranslation(translation) {
-    await this.easydbClient.updateElement(this.spaceName, this.bucketName,
+    await this.easydbClient.updateElement(this.spaceName, this.bucketName, translation.translationId,
       new Element()
         .addField("userId", translation.userId)
         .addField("word", translation.word)
-        .addField("translation", translation.translation)
-        .addField("id", translation.translationId));
+        .addField("translation", translation.translation));
   }
 
   static buildQuery(userId) {
@@ -66,7 +65,7 @@ class TranslationClient {
 }
 
 class Translation {
-  constructor(userId, word, translation, translationId = "") {
+  constructor(userId, word = "", translation = "", translationId = "") {
     this.userId = userId;
     this.word = word;
     this.translation = translation;

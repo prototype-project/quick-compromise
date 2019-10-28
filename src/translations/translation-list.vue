@@ -5,6 +5,8 @@
 </template>
 
 <script>
+  import {Translation} from "./translations";
+
   export default {
     props: {
       translationsClient: {
@@ -29,10 +31,14 @@
       async fetchTranslations() {
         this.translations = await this.translationsClient.fetchTranslations(this.user.getId());
       },
-      async saveTranslation(translation) {
+      async addEmptyTranslation() {
+        this.translations.push(new Translation(this.user.getId()));
+        return this.translations.length - 1;
+      },
+      async saveTranslation(translation, index) {
         if (_.isEmpty(translation.translationId)) {
           let translationWithId = await this.translationsClient.addTranslation(translation);
-          this.translations.push(translationWithId);
+          this.translations[index] = translation;
           return translationWithId;
         }
         return null;
