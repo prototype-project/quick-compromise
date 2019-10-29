@@ -1,13 +1,16 @@
 <template>
     <div class="container">
-
+        <single-translation v-for="(t, index) in translations" :key="t.id" :translation="t" :index="index" :event-bus="eventBus">
+        </single-translation>
     </div>
 </template>
 
 <script>
   import {Translation} from "./translations";
+  import SingleTranslation from "./single-translation";
 
   export default {
+    components: {SingleTranslation},
     props: {
       translationsClient: {
         type: Object,
