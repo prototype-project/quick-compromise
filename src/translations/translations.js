@@ -11,6 +11,18 @@ class TranslationClient {
   }
 
   async fetchTranslations(userId) {
+    try {
+      return await this._fetchTranslations(userId);
+    } catch (error) {
+      if (error.bucketDoesNotExist()) {
+        return [];
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  async _fetchTranslations(userId) {
     let elements = await this.easydbClient.queryElements(this.spaceName, this.bucketName, TranslationClient.buildQuery(userId));
     return elements.map(e => {
       return new Translation(

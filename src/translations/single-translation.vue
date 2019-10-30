@@ -4,13 +4,12 @@
             <div class="col-sm">
                 <form>
                     <div class="row form-group">
-                        <input class="col-sm-4 offset-1 form-control" v-model="word" @change="throttledSave"
+                        <input class="col-sm-4 offset-1 form-control" v-model="word" @change="save"
                                placeholder="Word">
-                        <input class="col-sm-4 offset-1 form-control" v-model="translatedWord" @change="throttledSave"
+                        <input class="col-sm-4 offset-1 form-control" v-model="translatedWord" @change="save"
                                placeholder="Translation">
                     </div>
                 </form>
-                {{word}} {{translatedWord}}
             </div>
         </div>
     </div>
@@ -42,9 +41,6 @@
       }
     },
     methods: {
-      throttledSave() {
-        _.debounce(this.save, 2000);
-      },
       save() {
         if (this.validate()) {
           this.saveTranslation()

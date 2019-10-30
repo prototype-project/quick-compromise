@@ -1,7 +1,11 @@
 <template>
     <div class="container">
-        <single-translation v-for="(t, index) in translations" :key="t.id" :translation="t" :index="index" :event-bus="eventBus">
+        <single-translation v-for="(t, index) in translations" :key="t.translationId" :translation="t" :index="index"
+                            :event-bus="eventBus">
         </single-translation>
+        <button class="btn btn-primary" v-on:click="addEmptyTranslation()">
+            <i class="icon-user icon-white"></i> Add
+        </button>
     </div>
 </template>
 
@@ -38,26 +42,34 @@
         this.translations.push(new Translation(this.user.getId()));
         return this.translations.length - 1;
       },
-      async saveTranslation(translation, index) {
+      async saveOrUpdateTranslation(translation, index) {
         if (_.isEmpty(translation.translationId)) {
-          let translationWithId = await this.translationsClient.addTranslation(translation);
-          this.translations[index] = translation;
-          return translationWithId;
+          return this.saveTranslation(translation, index);
+        } else if (!_.isEmpty(translation.translationId)) {
+          return this.updateTranslation(translation, index);
+        } else {
+          return null;
         }
-        return null;
+      },
+      async saveTranslation(translation, index) {
+        let translationWithId = await this.translationsClient.addTranslation(translation);
+        this.translations[index] = translation;
+        return translationWithId;
       },
       async updateTranslation(translation, index) {
-        if (!_.isEmpty(translation.translationId)) {
-          await this.translationsClient.updateTranslation(translation);
-          this.translations[index] = translation;
-        }
+        await this.translationsClient.updateTranslation(translation);
+        this.translations[index] = translation;
+        return translation;
       }
     },
     async created() {
       this.eventBus.$on("translation-saved", async event => {
-        await this.saveTranslation(event.translation, event.index);
+        await this.saveOrUpdateTranslation(event.translation, event.index);
       });
       await this.fetchTranslations();
+    },
+    beforeDestroy() {
+      this.eventBus.$off("translation-saved");
     }
   }
 </script>

@@ -10,7 +10,7 @@ import {TranslationClient} from "./translations/translations";
 
 const easydbClient = new EasydbClient(Config.EASYDB_URL);
 const user = new User(easydbClient, Config.SPACE_NAME);
-const translationClient = new TranslationClient(easydbClient, Config.SPACE_NAME);
+const translationsClient = new TranslationClient(easydbClient, Config.SPACE_NAME);
 
 const router = new VueRouter({
   base: __dirname,
@@ -37,7 +37,7 @@ const router = new VueRouter({
       path: '/translations',
       name: 'TranslationsList',
       component: TranslationsList,
-      props: {translationClient: translationClient, user: user, eventBus: EventBus},
+      props: {translationsClient: translationsClient, user: user, eventBus: EventBus},
       meta: {
         requiresAuth: true
       }
@@ -54,7 +54,7 @@ router.beforeEach((to, from, next) => {
 });
 
 function routeRequiresAuthentication(toRoute) {
-  return toRoute.meta.requiresArg;
+  return toRoute.meta.requiresAuth;
 }
 
 export default router;

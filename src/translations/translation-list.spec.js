@@ -76,3 +76,7 @@ describe('Translation list', () => {
     assert.deepEqual(app.translations, [changedTranslation]);
   });
 });
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
