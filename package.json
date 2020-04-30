@@ -47,7 +47,7 @@
     "bootstrap": "^4.3.1",
     "bootstrap-material-design": "^4.1.2",
     "cors-anywhere": "^0.4.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "js-base64": "^2.5.1",
     "lodash": "^4.17.15",
     "node-fetch": "^2.6.0",
